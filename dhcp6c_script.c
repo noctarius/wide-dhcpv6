@@ -71,6 +71,7 @@ static char nispserver_str[] = "new_nisp_servers";
 static char nispname_str[] = "new_nisp_name";
 static char bcmcsserver_str[] = "new_bcmcs_servers";
 static char bcmcsname_str[] = "new_bcmcs_name";
+static char aftr_name_str[] = "new_aftr_name";
 
 int
 client6_script(scriptpath, state, optinfo)
@@ -153,6 +154,8 @@ client6_script(scriptpath, state, optinfo)
 		bcmcsnamelen += v->val_vbuf.dv_len;
 	}
 	envc += bcmcsnamelen ? 1 : 0;
+	if (&optinfo->aftr_name_val != NULL && &optinfo->aftr_name_len > 0)
+		envc++;
 
 	/* allocate an environments array */
 	if ((envp = malloc(sizeof (char *) * envc)) == NULL) {
@@ -378,6 +381,18 @@ client6_script(scriptpath, state, optinfo)
 			strlcat(s, v->val_vbuf.dv_buf, elen);
 			strlcat(s, " ", elen);
 		}
+	}
+	if (&optinfo->aftr_name_val != NULL && &optinfo->aftr_name_len > 0) {
+		elen = sizeof(aftr_name_str) + &optinfo->aftr_name.dv_len + 1;
+		if ((s = envp[i++] = malloc(elen)) == NULL) {
+			dprintf(LOG_NOTICE, FNAME,
+				"failed to allocate string for AFTR name");
+			ret = -1;
+			goto clean;
+		}
+		memset(s, 0, elen);
+		snprintf(s, elen, "%s=", aftr_name_str);
+		strlcat(s, &optinfo->aftr_name.dv_buf, elen);
 	}
 
 	/* launch the script */

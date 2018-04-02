@@ -107,7 +107,7 @@ static void cleanup_cflist __P((struct cf_list *));
 %token ADDRESS
 %token REQUEST SEND ALLOW PREFERENCE
 %token HOST HOSTNAME DUID
-%token OPTION RAPID_COMMIT DNS_SERVERS DNS_NAME NTP_SERVERS REFRESHTIME
+%token OPTION RAPID_COMMIT DNS_SERVERS DNS_NAME NTP_SERVERS REFRESHTIME AFTR_NAME
 %token SIP_SERVERS SIP_NAME
 %token NIS_SERVERS NIS_NAME
 %token NISP_SERVERS NISP_NAME
@@ -744,6 +744,14 @@ dhcpoption:
 			/* currently no value */
 			$$ = l;
 		}
+	|   AFTR_NAME
+	    {
+			struct cf_list *l;
+
+			MAKE_CFLIST(l, DHCPOPT_AFTR_NAME, NULL, NULL);
+			/* no value */
+			$$ = l;
+	    }
 	;
 
 rangeparam:

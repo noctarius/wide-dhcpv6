@@ -1650,6 +1650,7 @@ add_options(opcode, ifc, cfl0)
 		case DHCPOPT_BCMCS:
 		case DHCPOPT_BCMCSNAME:
 		case DHCPOPT_REFRESHTIME:
+		case DHCPOPT_AFTR_NAME:
 			switch (cfl->type) {
 			case DHCPOPT_SIP:
 				opttype = DH6OPT_SIP_SERVER_A;
@@ -1687,6 +1688,8 @@ add_options(opcode, ifc, cfl0)
 			case DHCPOPT_REFRESHTIME:
 				opttype = DH6OPT_REFRESHTIME;
 				break;
+			case DHCPOPT_AFTR_NAME:
+				opttype = DH6OPT_AFTR_NAME;
 			}
 			switch(opcode) {
 			case DHCPOPTCODE_REQUEST:

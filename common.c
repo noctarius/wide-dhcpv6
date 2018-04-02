@@ -1380,6 +1380,9 @@ dhcp6_clear_options(optinfo)
 	if (optinfo->ifidopt_id != NULL)
 		free(optinfo->ifidopt_id);
 
+	if (optinfo->aftr_name_val != NULL)
+		free(optinfo->aftr_name_val);
+
 	dhcp6_init_options(optinfo);
 }
 
@@ -1443,6 +1446,12 @@ dhcp6_copy_options(dst, src)
 		dst->ifidopt_len = src->ifidopt_len;
 		memcpy(dst->ifidopt_id, src->ifidopt_id, src->ifidopt_len);
 	}
+
+	if (src->aftr_name_val != NULL)
+		if ((dst->aftr_name_val = malloc(src->aftr_name_val)) == NULL)
+			goto fail;
+		dst->aftr_name_len = src->aftr_name_len;
+		memcpy(dst->aftr_name_val, src->aftr_name_val, src->aftr_name_len);
 
 	dst->authflags = src->authflags;
 	dst->authproto = src->authproto;
@@ -1871,6 +1880,12 @@ dhcp6_get_options(p, ep, optinfo)
 			}
 			dhcp6_clear_list(&sublist);
 
+			break;
+		case DH6OPT_AFTR_NAME:
+			if ((optinfo->aftr_name_val = malloc(optlen)) == NULL)
+				goto fail;
+				memcpy(optinfo->aftr_name_val, cp, optlen);
+				optinfo->aftr_name_len = optlen;
 			break;
 		default:
 			/* no option specific behavior */
@@ -2458,6 +2473,13 @@ dhcp6_set_options(type, optbp, optep, optinfo)
 	if (optinfo->ifidopt_id) {
 		if (copy_option(DH6OPT_INTERFACE_ID, optinfo->ifidopt_len,
 		    optinfo->ifidopt_id, &p, optep, &len) != 0) {
+			goto fail;
+		}
+	}
+
+	if (optinfo->aftr_name_val) {
+		if (copy_option(DH6OPT_AFTR_NAME, optinfo->aftr_name_len,
+			optinfo->aftr_name_val, &p, optep, &len) != 0) {
 			goto fail;
 		}
 	}
@@ -3052,6 +3074,8 @@ dhcp6optstr(type)
 		return ("subscriber ID");
 	case DH6OPT_CLIENT_FQDN:
 		return ("client FQDN");
+	case DH6OPT_AFTR_NAME:
+		return ("AFTR name");
 	default:
 		snprintf(genstr, sizeof(genstr), "opt_%d", type);
 		return (genstr);

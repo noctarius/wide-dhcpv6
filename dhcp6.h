@@ -206,6 +206,10 @@ struct dhcp6_optinfo {
 #define ifidopt_len ifidopt.dv_len
 #define ifidopt_id ifidopt.dv_buf
 
+    struct dhcp6_vbuf aftr_name; /* AFTR DNS name */
+#define aftr_name_len aftr_name.dv_len
+#define aftr_name_val aftr_name.dv_buf
+
 	u_int authflags;
 #define DHCP6OPT_AUTHFLAG_NOINFO	0x1
 	int authproto;
@@ -309,6 +313,7 @@ struct dhcp6_relay {
 #define DH6OPT_REMOTE_ID 37
 #define DH6OPT_SUBSCRIBER_ID 38
 #define DH6OPT_CLIENT_FQDN 39
+#define DH6OPT_AFTR_NAME 64
 
 /* The followings are KAME specific. */
 
